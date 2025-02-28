@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/Css/Generales/all.min.css">
+    <link rel="stylesheet" href="css/styles-adm_registration.css">
+    <script type="module">
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.16.0/firebase-app.js';
+      import { getAuth } from 'https://www.gstatic.com/firebasejs/9.16.0/firebase-auth.js';
+      import { getFirestore } from 'https://www.gstatic.com/firebasejs/9.16.0/firebase-firestore.js';
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyCAQefjRO9ixEnnlyIohqnOI4MVzC38lc8",
+        authDomain: "administrador-638bc.firebaseapp.com",
+        projectId: "administrador-638bc",
+        storageBucket: "administrador-638bc.firebasestorage.app",
+        messagingSenderId: "31705925031",
+        appId: "1:31705925031:web:0f3c1158f7a7ff91fde282",
+        measurementId: "G-EJFSB52GBN"
+        };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+    </script>
+</head>
+<body>
+
+    <div class="container" id="main-container">
+        <h1 id="main-title"> * Base de datos Administrador <i class="fas fa-check-circle fa-lg"></i></h1>
+        <div class="division" id="division-line"></div>   
+        
+        <div class="form-busqueda-container" id="search-container">
+            <h2 id="search-title">Buscar Usuarios</h2>
+            <div class="form-row-busqueda" id="search-row">
+                <div class="form-group-busqueda" id="search-by-company">
+                    <label for="buscarUsuario">Buscar por usuario</label>
+                    <input type="text" id="buscarUsuario" placeholder="Ingrese el usuario">
+                </div>
+                <div class="form-group-busqueda" id="search-by-rut">
+                    <label for="buscarNombreUsuario">Buscar por nombre</label>
+                    <input type="text" id="buscarNombreUsuario" placeholder="Ingrese el nombre del usuario">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-nuevo-container" id="formNuevoContainer"> 
+            <button id="bttnNuevo" class="bttn-nuevo">Nuevo <i class="fas fa-plus-circle"></i></button>
+            <span class="bttn-texto" id="new-text">
+                <i class="fas fa-arrow-left fa-lg"></i> Presiona "NUEVO" para registrar un nuevo usuario.
+            </span>
+        </div>
+
+        <div class="form-casillas-container hidden" id="formCasillasContainer"> 
+            <button id="bttnCasillas" class="bttn-casillas">Eliminar selección <i class="fas fa-trash-alt"></i></button>
+            <span class="bttn-texto-casillas" id="delete-selection-text">
+                <i class="fas fa-arrow-left fa-lg"></i> Presiona el botón para eliminar la Selección.
+            </span>
+        </div>
+
+        <div class="form-registrar-container hidden" id="formRegistrarContainer">
+            <h2 id="register-title">Formulario de Registro</h2>
+            <div class="form-row-registrar" id="register-row"> 
+                <div class="form-group-registrar" id="register-fullname">
+                    <label for="registrarNombreCompleto">Nombre Completo</label>
+                    <input type="text" id="registrarNombreCompleto" placeholder="Ingrese su nombre completo" required>
+                </div>
+                
+                <div class="form-group-registrar" id="register-rut">
+                    <label for="registrarRut">RUT</label>
+                    <input type="text" id="registrarRut" placeholder="Ingrese su RUT" required>
+                </div>
+                
+                <div class="form-group-registrar" id="register-email">
+                    <label for="registrarCorreo">Correo Electrónico</label>
+                    <input type="email" id="registrarCorreo" placeholder="Ingrese su correo electrónico" required>
+                </div>
+                
+                <div class="form-group-registrar" id="register-identity">
+                    <label for="registrarIdentidad">Identidad</label>
+                    <select id="registrarIdentidad" required>
+                        <option value="" disabled selected>Seleccione una opción</option>
+                        <option value="hombre">Hombre</option>
+                        <option value="mujer">Mujer</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
+                
+                <div class="form-group-registrar" id="register-username">
+                    <label for="registrarUsuario">Nombre de Usuario</label>
+                    <input type="text" id="registrarUsuario" placeholder="Ingrese un nombre de usuario" required>
+                </div>
+                
+                <div class="form-group-registrar" id="register-role">
+                    <label for="registrarCargo">Cargo</label>
+                    <input type="text" id="registrarCargo" placeholder="Ingrese su cargo" required>
+                </div>
+                
+                <div class="form-group-registrar" id="register-password">
+                    <label for="registrarContrasena">Contraseña</label>
+                    <input type="password" id="registrarContrasena" placeholder="Ingrese una contraseña" required>
+                </div>
+                
+                <div class="form-group-registrar" id="register-buttons">
+                    <div class="bttn-container-registrar" id="register-button-container">
+                        <button type="submit" class="btn-guardar-registrar" id="btnGuardar"><i class="fas fa-save"></i> Guardar</button>
+                        <button type="reset" class="btn-cancelar-registrar" id="btnCancelar"><i class="fas fa-times"></i> Cancelar</button>
+                    </div>
+                </div>
+            </div>  
+        </div>
+        
+        <div class="table-container" id="tableContainer">
+            <table id="BaseDatos">
+                <thead id="tableHeader">
+                    <tr>
+                        <th id="headerSeleccion">
+                            <input type="checkbox" id="selectAll">
+                        </th>
+                        <th id="headerId">Id <i class="fas fa-sort-alpha-down"></i></th>
+                        <th id="headerPerfil">Perfil <i class="fas fa-sort-alpha-down"></i></th>
+                        <th id="headerEmpresa">Nombre completo <i class="fas fa-sort-alpha-down"></i></th>
+                        <th id="headerRut">RUT <i class="fas fa-sort-alpha-down"></i></th>
+                        <th id="headerCorreo">Correo electrónico <i class="fas fa-sort-alpha-down"></i></th>
+                        <th id="headerIdentidad">Identidad <i class="fas fa-sort-alpha-down"></i></th>
+                        <th id="headerUsuario">Usuario <i class="fas fa-sort-alpha-down"></i></th>
+                        <th id="headerCargo">Cargo <i class="fas fa-sort-alpha-down"></i></th>
+                    </tr>
+                </thead>
+                <tbody id="table-body"></tbody>
+            </table>
+        </div>
+
+        <div id="pagination"></div>
+
+        <div class="download-container" id="downloadContainer"> 
+            <button id="bttnDownload" class="bttn-download">Descargar Excel <i class="fas fa-download"></i></button>
+            <button id="bttnImport" class="bttn-import">Importar Excel <i class="fas fa-upload"></i></button>
+        </div>
+
+        <div class="editContainer hidden" id="edit-container-nombreEmpresa">
+            <button class="close-btn-edit" id="close-edit-nombreEmpresa">×</button>
+            <div class="edit-form" id="edit-form-nombre">
+                <h3><i class="fas fa-edit"></i> Actualiza el nombre de la empresa:</h3>
+                <input type="text" id="edit-empresa" placeholder="Ingrese el nuevo nombre de la empresa" required />
+                <button id="btnGuardarNombre"><i class="fas fa-save"></i> Guardar</button>
+                <button id="btnCancelarNombre"><i class="fas fa-times"></i> Cancelar</button>
+            </div>
+        </div>  
+
+        <div class="editContainer hidden" id="edit-container-RutEmpresa">
+            <button class="close-btn-edit" id="close-edit-RutEmpresa">×</button>
+            <div class="edit-form" id="edit-form-rut">
+                <h3><i class="fas fa-edit"></i> Actualiza el RUT de la empresa:</h3>
+                <input type="text" id="edit-rut" placeholder="Ingrese el nuevo RUT de la empresa" required />
+                <button id="btnGuardarRut"><i class="fas fa-save"></i> Guardar</button>
+                <button id="btnCancelarRut"><i class="fas fa-times"></i> Cancelar</button>
+            </div>
+        </div>  
+
+        <div class="overlay hidden" id="overlay">
+            <div class="spinner-container" id="spinnerContainer">
+              <div class="lds-dual-ring" id="spinner"></div>
+              <div class="loading-text" id="loadingText">Registrando...</div>
+            </div>
+        </div>
+
+
+        <div class="messages-container" id="messagesContainer">
+            <div class="message success hidden" id="messageSuccess">
+              <i class="fas fa-check-circle"></i>
+              <div class="text" id="successText"></div>
+              <button class="close-btn" id="closeMessageSuccess">&times;</button>
+            </div>
+            <div class="message warning hidden" id="messageWarning">
+              <i class="fas fa-exclamation-circle"></i>
+              <div class="text" id="warningText"></div>
+              <button class="close-btn" id="closeMessageWarning">&times;</button>
+            </div>
+            <div class="message error hidden" id="messageError">
+              <i class="fas fa-times-circle"></i>
+              <div class="text" id="errorText"></div>
+              <button class="close-btn" id="closeMessageError">&times;</button>
+            </div>
+            <div class="message info hidden" id="messageInfo">
+              <i class="fas fa-info-circle"></i>
+              <div class="text" id="infoText"></div>
+              <button class="close-btn" id="closeMessageInfo">&times;</button>
+            </div>
+        </div>
+
+        <div class="delete-container hidden" id="deleteContainer">
+            <div class="delete-form" id="deleteForm">
+                <h3 id="deleteTitle">¿Estás seguro de que deseas eliminar esta selección?</h3>
+                <div class="delete-buttons" id="deleteButtons">
+                    <button id="btnConfirmarEliminar"><i class="fas fa-trash-alt"></i> Eliminar</button>
+                    <button id="btnCancelarEliminar"><i class="fas fa-times"></i> Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script/toggleForm.js"></script>
+    <script type="module" src="script/registroUsuarios.js"></script>
+    <script type="module" src="script/mostrarUsuarios.js"></script>
+
+</body>
+</html>
